@@ -1,0 +1,13 @@
+whirly
+=====
+whirly is a framework wrapper for the scalable, non-blocking web server tornado,
+which provided an extension system to enhance the use of tornado web server.
+Whirly is compatible with Google App Engine in WSGI mode.
+
+Already provided extensions:
+* Session
+* Storage (MySQL, PostgreSQL, SQLite, MongoDB, Datastore, Redis)
+* Auth
+* Cache
+* Flash Message
+* Support different template engines
