@@ -20,7 +20,7 @@ from setuptools import setup, find_packages
 setup(
     name='whirly',
     version='0.1',
-    url='',
+    url='https://github.com/yuanhao/Whirly',
     license='Apache Software License',
     author='Yuanhao Li',
     author_email='yuanhao.li [at] gmail [dot] com',

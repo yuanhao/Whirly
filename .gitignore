@@ -1,0 +1,8 @@
+*.pyc
+*.so
+*~
+todo
+build
+dist/
+MANIFEST
+whirly.egg-info
