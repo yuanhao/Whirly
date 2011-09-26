@@ -28,22 +28,17 @@ except:
 
 from whirly import project
 from whirly import utils
+from whirly.extensions.storage import StorageEngineMemcache
+from whirly.extensions.storage import StorageEngineMemcached
+from whirly.extensions.storage import StorageEngineRedis
 from whirly.extensions.storage import StorageEngineError
-from whirly.extensions.storage import StorageEngineDelegate
 
 
-
-__all__ = ['MemcachedMixIn', 'DirMixIn', 'RedisMixIn',
-           'MemcacheMixIn']
+__all__ = ['Dir', 'Memcache', 'Memcached', 'Redis']
 
 
 class CacheBase(object):
     def __init__(self, timeout=300, **kwargs):
-        self.storage_url = project.setting('cache', 'storage_url')
-        try:
-            self.engine = StorageEngineDelegate(self.storage_url)
-        except StorageEngineError:
-            raise
         self.timeout = timeout
         self._prepare()
 
@@ -88,58 +83,40 @@ class CacheMixIn:
 
 
 class Memcached(CacheBase):
+    def __init__(self, timeout=300, **kwargs):
+        self.storage_url = project.setting('cache', 'storage_url')
+        try:
+            self.engine = StorageEngineMemcached(self.storage_url).get_engine()
+        except StorageEngineError:
+            raise
+        super(Memcached, self).__init__(timeout, **kwargs)
+
     def __call__(self):
         return self.engine
-
-
-    # def get(self, key, default=None):
-        # value = self.engine.get(key)
-        # if not value:
-            # return default
-        # return value
-
-    # def set(self, key, value, timeout=0):
-        # if timeout == 0:
-            # timeout = self.timeout
-        # self.engine.set(key, value, timeout)
-
-    # def delete(self, key):
-        # self.engine.delete(key)
-
-    # def contains(self, key):
-        # return self.engine.get(key) is not None
-
-    # def clear(self):
-        # if session use memcached, will be flushed too XXX
-        # self.engine.flush_all()
-
-    # def incr(self, key):
-        # self.engine.incr(key)
-
-    # def decr(self, key):
-        # self.engine.decr(key)
-
-    # def append(self, key, value):
-        # self.engine.append(value)
-
-    # def prepend(self, key, value):
-        # self.engine.prepend(value)
-
-    # def set_many(self, data, timeout=0):
-        # if timeout == 0:
-            # timeout = self.timeout
-        # self.engine.set_multi(data, timeout)
-
-    # def delete_many(self, keys):
-        # self.engine.delete_multi(keys)
 
 
 class Memcache(CacheBase):
+    def __init__(self, timeout=300, **kwargs):
+        self.storage_url = project.setting('cache', 'storage_url')
+        try:
+            self.engine = StorageEngineMemcache(self.storage_url).get_engine()
+        except StorageEngineError:
+            raise
+        super(Memcache, self).__init__(timeout, **kwargs)
+
     def __call__(self):
         return self.engine
 
 
-class RedisMixIn(CacheBase, CacheMixIn):
+class Redis(CacheBase, CacheMixIn):
+    def __init__(self, timeout=300, **kwargs):
+        self.storage_url = project.setting('cache', 'storage_url')
+        try:
+            self.engine = StorageEngineRedis(self.storage_url).get_engine()
+        except StorageEngineError:
+            raise
+        super(Redis, self).__init__(timeout, **kwargs)
+
     def get(self, key, default=None):
         value = default
         now = time.time()
@@ -192,7 +169,7 @@ class RedisMixIn(CacheBase, CacheMixIn):
                 self.engine.delete(key)
 
 
-class DirMixIn(CacheBase, CacheMixIn):
+class Dir(CacheBase, CacheMixIn):
     def _prepare(self):
         self._prepare_dir()
         self._max_entries = 300

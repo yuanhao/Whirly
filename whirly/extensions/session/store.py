@@ -61,8 +61,11 @@ except ImportError:
 import whirly.project
 import whirly.utils
 from whirly.extensions.storage import StorageEngineMongoDB
+from whirly.extensions.storage import StorageEngineDatastore
 from whirly.extensions.storage import StorageEngineMySQL
 from whirly.extensions.storage import StorageEngineRedis
+from whirly.extensions.storage import StorageEngineMemcache
+from whirly.extensions.storage import StorageEngineMemcached
 from whirly.extensions.storage import StorageEngineError
 
 

@@ -24,6 +24,14 @@ import logging
 from whirly.extensions.base import Extension
 
 
+class DatabaseExtension(Extension):
+    def __init__(self):
+        self.define_required('database_url', 'url to connect database')
+        super(DatabaseExtension, self).__init__('database')
+        self.db_url = self.settings.get('database_url')
+        db_type = self.db_url.split('://')[0].lower()
+        logging.debug("Database url selected: %s" % self.db_url)
+
 
 class StorageEngineError(Exception):
     def __init__(self, message):
@@ -113,14 +121,7 @@ class StorageEngineMongoDB(StorageEngine):
         self._set_engine(conn, db=conn[db])
 
 
-class MongoDB(Extension):
-    def __init__(self):
-        self.define_required('database_url', 'url to connect database')
-        super(DatabaseExtension, self).__init__('database')
-        self.db_url = self.settings.get('database_url')
-        db_type = self.db_url.split('://')[0].lower()
-        logging.debug("Database url selected: %s" % self.db_url)
-
+class MongoDB(DatabaseExtension):
     def before(self, handler):
         store = StorageEngineMongoDB(self.db_url)
         store.get_engine()
@@ -177,14 +178,7 @@ class StorageEngineRedis(StorageEngine):
         self._set_engine(engine)
 
 
-class Redis(Extension):
-    def __init__(self):
-        self.define_required('database_url', 'url to connect database')
-        super(DatabaseExtension, self).__init__('database')
-        self.db_url = self.settings.get('database_url')
-        db_type = self.db_url.split('://')[0].lower()
-        logging.debug("Database url selected: %s" % self.db_url)
-
+class Redis(DatabaseExtension):
     def before(self, handler):
         handler.db = StorageEngineRedis(self.db_url).get_engine()
         return handler
@@ -224,14 +218,7 @@ class StorageEngineMySQL(StorageEngine):
         self._set_engine(mysql.Connection(host, db, user=user, password=pwd))
 
 
-class MySQL(Extension):
-    def __init__(self):
-        self.define_required('database_url', 'url to connect database')
-        super(DatabaseExtension, self).__init__('database')
-        self.db_url = self.settings.get('database_url')
-        db_type = self.db_url.split('://')[0].lower()
-        logging.debug("Database url selected: %s" % self.db_url)
-
+class MySQL(DatabaseExtension):
     def before(self, handler):
         handler.db = StorageEngineMySQL(self.db_url).get_engine()
         return handler

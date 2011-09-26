@@ -18,7 +18,7 @@
 import httplib
 import logging
 
-from tornado.wsgi import HTTPRequest, WSGIContainer, HTTPHeaders
+from tornado.wsgi import HTTPRequest, WSGIContainer
 
 from whirly.web import Application
 
